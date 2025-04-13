@@ -1,0 +1,153 @@
+<div class="dashboard-container">
+    <h1>Event Management Dashboard</h1>
+  
+    <div *ngIf="isLoading" class="loading-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  
+    <div *ngIf="!isLoading" class="dashboard-content">
+      <!-- Stats Cards -->
+      <div class="stats-container">
+        <mat-card class="stats-card stats-total">
+          <mat-card-content>
+            <div class="stats-icon">
+              <mat-icon>event</mat-icon>
+            </div>
+            <div class="stats-details">
+              <div class="stats-number">{{ totalEvents }}</div>
+              <div class="stats-label">Total Events</div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button routerLink="/events">View All</a>
+          </mat-card-actions>
+        </mat-card>
+  
+        <mat-card class="stats-card stats-published">
+          <mat-card-content>
+            <div class="stats-icon">
+              <mat-icon>publish</mat-icon>
+            </div>
+            <div class="stats-details">
+              <div class="stats-number">{{ publishedEvents }}</div>
+              <div class="stats-label">Published Events</div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button routerLink="/events">View All</a>
+          </mat-card-actions>
+        </mat-card>
+  
+        <mat-card class="stats-card stats-draft">
+          <mat-card-content>
+            <div class="stats-icon">
+              <mat-icon>edit</mat-icon>
+            </div>
+            <div class="stats-details">
+              <div class="stats-number">{{ draftEvents }}</div>
+              <div class="stats-label">Draft Events</div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button routerLink="/events">View All</a>
+          </mat-card-actions>
+        </mat-card>
+  
+        <mat-card class="stats-card stats-upcoming">
+          <mat-card-content>
+            <div class="stats-icon">
+              <mat-icon>upcoming</mat-icon>
+            </div>
+            <div class="stats-details">
+              <div class="stats-number">{{ upcomingEventsCount }}</div>
+              <div class="stats-label">Upcoming Events</div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button routerLink="/events">View All</a>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+  
+      <!-- Recent & Upcoming Events -->
+      <div class="events-container">
+        <div class="recent-events">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Recently Added Events</mat-card-title>
+              <a mat-button routerLink="/events" class="view-all-link">View All</a>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-list>
+                <mat-list-item *ngFor="let event of recentEvents" [routerLink]="['/events/edit', event.id]" class="event-list-item">
+                  <div mat-line class="event-title">{{ event.title }}</div>
+                  <div mat-line class="event-details">
+                    {{ event.startDate | date:'shortDate' }} | {{ event.venueName }}
+                  </div>
+                  <div mat-line>
+                    <span class="event-type">{{ EventType[event.type] }}</span>
+                  </div>
+                  <mat-chip [ngClass]="getEventStatusClass(event.status)">
+                    {{ getEventStatusText(event.status) }}
+                  </mat-chip>
+                </mat-list-item>
+  
+                <mat-list-item *ngIf="recentEvents.length === 0">
+                  <div mat-line>No events found</div>
+                </mat-list-item>
+              </mat-list>
+            </mat-card-content>
+          </mat-card>
+        </div>
+  
+        <div class="upcoming-events">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Upcoming Events</mat-card-title>
+              <a mat-button routerLink="/events" class="view-all-link">View All</a>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-list>
+                <mat-list-item *ngFor="let event of upcomingEvents" [routerLink]="['/events/edit', event.id]" class="event-list-item">
+                  <div mat-line class="event-title">{{ event.title }}</div>
+                  <div mat-line class="event-details">
+                    {{ event.startDate | date:'shortDate' }} | {{ event.venueName }}
+                  </div>
+                  <div mat-line>
+                    <span class="event-type">{{ EventType[event.type] }}</span>
+                  </div>
+                  <mat-chip [ngClass]="getEventStatusClass(event.status)">
+                    {{ getEventStatusText(event.status) }}
+                  </mat-chip>
+                </mat-list-item>
+  
+                <mat-list-item *ngIf="upcomingEvents.length === 0">
+                  <div mat-line>No upcoming events found</div>
+                </mat-list-item>
+              </mat-list>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+  
+      <!-- Quick Actions -->
+      <mat-card class="quick-actions">
+        <mat-card-header>
+          <mat-card-title>Quick Actions</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="actions-container">
+            <a mat-raised-button color="primary" routerLink="/events/new">
+              <mat-icon>add_circle</mat-icon>
+              Create New Event
+            </a>
+            
+            <a mat-stroked-button color="primary" routerLink="/events">
+              <mat-icon>list</mat-icon>
+              Manage Events
+            </a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>

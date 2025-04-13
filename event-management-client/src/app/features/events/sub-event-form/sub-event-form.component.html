@@ -1,0 +1,136 @@
+<div class="sub-event-form-container">
+    <h1>Create Sub-Event</h1>
+    <p *ngIf="parentEvent" class="parent-event-info">
+      Parent Event: <span class="parent-title">{{ parentEvent.title }}</span>
+    </p>
+  
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  
+    <div *ngIf="!isLoading" class="form-content">
+      <form [formGroup]="subEventForm" (ngSubmit)="onSubmit()">
+        <div class="form-layout">
+          <div class="form-main">
+            <mat-card>
+              <mat-card-content>
+                <h2>Sub-Event Details</h2>
+                
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Title</mat-label>
+                    <input matInput formControlName="title" placeholder="Sub-event title">
+                    <mat-error *ngIf="subEventForm.get('title')?.hasError('required')">
+                      Title is required
+                    </mat-error>
+                    <mat-error *ngIf="subEventForm.get('title')?.hasError('maxlength')">
+                      Title cannot be longer than 100 characters
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+  
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput formControlName="description" rows="4" placeholder="Sub-event description"></textarea>
+                    <mat-error *ngIf="subEventForm.get('description')?.hasError('required')">
+                      Description is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+  
+                <div class="form-row date-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Start Date</mat-label>
+                    <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startPicker></mat-datepicker>
+                    <mat-error *ngIf="subEventForm.get('startDate')?.hasError('required')">
+                      Start date is required
+                    </mat-error>
+                  </mat-form-field>
+  
+                  <mat-form-field appearance="outline">
+                    <mat-label>End Date</mat-label>
+                    <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+                    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endPicker></mat-datepicker>
+                    <mat-error *ngIf="subEventForm.get('endDate')?.hasError('required')">
+                      End date is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+  
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Venue</mat-label>
+                    <input matInput formControlName="venueName" placeholder="Event venue">
+                    <mat-error *ngIf="subEventForm.get('venueName')?.hasError('required')">
+                      Venue is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+  
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Capacity</mat-label>
+                    <input matInput type="number" formControlName="capacity" min="1">
+                    <mat-error *ngIf="subEventForm.get('capacity')?.hasError('required')">
+                      Capacity is required
+                    </mat-error>
+                    <mat-error *ngIf="subEventForm.get('capacity')?.hasError('min')">
+                      Capacity must be at least 1
+                    </mat-error>
+                  </mat-form-field>
+  
+                  <mat-form-field appearance="outline">
+                    <mat-label>Status</mat-label>
+                    <mat-select formControlName="status">
+                      <mat-option *ngFor="let status of eventStatuses" [value]="status.value">
+                        {{ status.name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+  
+          <div class="form-sidebar">
+            <mat-card class="image-card">
+              <mat-card-content>
+                <h2>Banner Image</h2>
+                
+                <div class="image-preview-container">
+                  <div *ngIf="imagePreviewUrl" class="image-preview">
+                    <img [src]="imagePreviewUrl" alt="Sub-event banner preview">
+                    <button type="button" mat-icon-button color="warn" (click)="removeImage()" class="remove-image-btn">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                  
+                  <div *ngIf="!imagePreviewUrl" class="image-upload">
+                    <mat-icon>image</mat-icon>
+                    <p>No image uploaded</p>
+                    <button type="button" mat-stroked-button (click)="fileInput.click()">
+                      <mat-icon>upload</mat-icon>
+                      Upload Image
+                    </button>
+                    <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none">
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+  
+        <div class="form-actions">
+          <button type="button" mat-stroked-button (click)="cancel()">Cancel</button>
+          <button type="submit" mat-raised-button color="primary" [disabled]="isSubmitting">
+            <mat-spinner diameter="20" *ngIf="isSubmitting" class="spinner-button"></mat-spinner>
+            <span *ngIf="!isSubmitting">Create Sub-Event</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
