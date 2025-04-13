@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.Core", "EventManagement.Core\EventManagement.Core.csproj", "{BE85251A-109D-4754-AE39-78FA57D7CBA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement.API", "EventManagement.API\EventManagement.API.csproj", "{4C4F3493-EA94-414C-A476-0684C0FFFBC8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BE85251A-109D-4754-AE39-78FA57D7CBA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE85251A-109D-4754-AE39-78FA57D7CBA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE85251A-109D-4754-AE39-78FA57D7CBA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE85251A-109D-4754-AE39-78FA57D7CBA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C4F3493-EA94-414C-A476-0684C0FFFBC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C4F3493-EA94-414C-A476-0684C0FFFBC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C4F3493-EA94-414C-A476-0684C0FFFBC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C4F3493-EA94-414C-A476-0684C0FFFBC8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
