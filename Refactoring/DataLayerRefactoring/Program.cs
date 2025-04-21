@@ -2,6 +2,9 @@ using DataLayerRefactoring.Data;
 using DataLayerRefactoring.Repositories;
 using DataLayerRefactoring.Services;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
+
+Batteries_V2.Init();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,10 +47,6 @@ using (var scope = app.Services.CreateScope())
         // Apply any pending migrations
         dbContext.Database.Migrate();
         
-        // Seed data if needed
-        var seeder = services.GetRequiredService<DataSeeder>();
-        seeder.SeedData().Wait();
-
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogInformation("Database initialized successfully");
     }

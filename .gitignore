@@ -1,4 +1,5 @@
 # .NET Core / .NET specific
+*.db
 *.swp
 *.user
 *.userosscache

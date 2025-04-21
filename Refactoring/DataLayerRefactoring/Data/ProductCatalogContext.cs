@@ -21,17 +21,6 @@ namespace DataLayerRefactoring.Data
                 .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId);
 
-            // Seed some data
-            modelBuilder.Entity<Category>().HasData(
-                new Category { Id = 1, Name = "Electronics", Description = "Electronic devices and accessories" },
-                new Category { Id = 2, Name = "Clothing", Description = "Apparel and fashion items" }
-            );
-
-            modelBuilder.Entity<Product>().HasData(
-                new Product { Id = 1, Name = "Smartphone", Description = "Latest model smartphone", Price = 699.99m, Stock = 100, CategoryId = 1 },
-                new Product { Id = 2, Name = "Laptop", Description = "High-performance laptop", Price = 1299.99m, Stock = 50, CategoryId = 1 },
-                new Product { Id = 3, Name = "T-Shirt", Description = "Cotton t-shirt", Price = 19.99m, Stock = 200, CategoryId = 2 }
-            );
         }
     }
 }
