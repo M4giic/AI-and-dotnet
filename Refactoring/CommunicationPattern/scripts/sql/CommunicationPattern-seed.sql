@@ -1,8 +1,5 @@
--- OrderProcessingAPI Seed Data Script
--- Ensure tables are clean before seeding
 DELETE FROM Orders;
 
--- Seed Orders with random GUIDs and dates
 INSERT INTO Orders (Id, CustomerName, ProductId, Quantity, TotalPrice, OrderDate, Status) 
 VALUES 
 ('8f2e9fad-8c2c-4320-82fb-336843bdbe31', 'John Smith', 'PROD-001', 2, 1399.98, datetime('now', '-30 days'), 'Delivered'),

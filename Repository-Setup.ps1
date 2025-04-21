@@ -11,11 +11,11 @@ $VerbosePreference = if ($VerboseOutput) { "Continue" } else { "SilentlyContinue
 
 # Array of project paths relative to the repository root
 $projectPaths = @(
-    "WebAPP/EventManagement.API",
+    # "WebAPP/EventManagement.API",
     "Refactoring/DataLayerRefactoring",
-    "Refactoring/CommunicationPattern",
+    "Refactoring/CommunicationPattern"
     # Add more project paths as needed
-    "src/ClientApp"  # Angular app path
+    # "src/ClientApp"  # Angular app path
 )
 
 # Path to SQL scripts for seeding data
@@ -278,7 +278,7 @@ function Invoke-DataSeeding {
         [string]$ScriptsPath
     )
     
-    $fullScriptsPath = Join-Path -Path (Get-Location) -ChildPath $ScriptsPath
+    $fullScriptsPath = Join-Path -Path $ProjectPath -ChildPath $ScriptsPath
     Write-Log "Seeding data for $ProjectPath from $fullScriptsPath..." "Info"
     
     # Check if scripts directory exists

@@ -1,5 +1,7 @@
 # .NET Core / .NET specific
 *.db
+*.db-shm
+*.db-wal
 *.swp
 *.user
 *.userosscache

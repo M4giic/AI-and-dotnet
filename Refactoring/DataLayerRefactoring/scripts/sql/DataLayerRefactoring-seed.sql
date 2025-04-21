@@ -1,13 +1,9 @@
--- ProductCatalog Seed Data Script
--- Ensure tables are clean before seeding
 DELETE FROM Products;
 DELETE FROM Categories;
 
--- Reset identity columns (SQLite syntax)
 DELETE FROM sqlite_sequence WHERE name='Products';
 DELETE FROM sqlite_sequence WHERE name='Categories';
 
--- Seed Categories
 INSERT INTO Categories (Name, Description, CreatedAt) 
 VALUES 
 ('Electronics', 'Electronic devices and accessories', datetime('now')),
