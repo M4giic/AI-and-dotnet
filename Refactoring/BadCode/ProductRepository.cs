@@ -9,13 +9,7 @@ public class ProductRepository : IProductRepository
         return _products.ToList();
     }
 
-    public async Task<Product?> GetByIdAsync(int id)
-    {
-        if (id <= 0)
-            throw new ArgumentException("ID must be positive", nameof(id));
-    
-        return _products.FirstOrDefault(p => p.Id == id);
-    }
+
 
     public async Task<bool> AddAsync(Product product)
     {
