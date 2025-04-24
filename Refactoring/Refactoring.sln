@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationPattern", "Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayerRefactoring", "DataLayerRefactoring\DataLayerRefactoring.csproj", "{29D646EE-4324-4A7E-A381-AFFD810A1582}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadCode", "BadCode\BadCode.csproj", "{A1DFA2BC-7529-4CCD-8B65-848463FFAFA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{29D646EE-4324-4A7E-A381-AFFD810A1582}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29D646EE-4324-4A7E-A381-AFFD810A1582}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29D646EE-4324-4A7E-A381-AFFD810A1582}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1DFA2BC-7529-4CCD-8B65-848463FFAFA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1DFA2BC-7529-4CCD-8B65-848463FFAFA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1DFA2BC-7529-4CCD-8B65-848463FFAFA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1DFA2BC-7529-4CCD-8B65-848463FFAFA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
