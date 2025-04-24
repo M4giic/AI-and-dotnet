@@ -1,84 +1,57 @@
 ﻿namespace BadCode;
 
-public class Product
+public class ProductRepository : IProductRepository
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
-    public bool IsAvailable { get; set; }
-}
+    private readonly List<Product> _products = new();
 
-public class ProductRepository
-{
-    private List<Product> _products = new List<Product>();
-    
-    public ProductRepository()
+    public async Task<IEnumerable<Product>> GetAllAsync()
     {
-        _products.Add(new Product { Id = 1, Name = "Laptop", Price = 999.99m, Stock = 10, IsAvailable = true });
-        _products.Add(new Product { Id = 2, Name = "Phone", Price = 499.99m, Stock = 20, IsAvailable = true });
-        _products.Add(new Product { Id = 3, Name = "Headphones", Price = 99.99m, Stock = 0, IsAvailable = false });
+        return _products.ToList();
     }
-    
-    public List<Product> GetAllProducts()
+
+    public async Task<Product?> GetByIdAsync(int id)
     {
-        return _products;
+        if (id <= 0)
+            throw new ArgumentException("ID must be positive", nameof(id));
+    
+        return _products.FirstOrDefault(p => p.Id == id);
     }
-    
-    public void AddProduct(Product product)
+
+    public async Task<bool> AddAsync(Product product)
     {
+        if (_products.Any(p => p.Id == product.Id))
+            throw new ArgumentException("Product with this ID already exists");
+
         _products.Add(product);
+        return true;
     }
-    
-    public bool UpdateProduct(Product product)
+
+    public async Task<bool> UpdateAsync(Product product)
     {
-        for (int i = 0; i < _products.Count; i++)
-        {
-            if (_products[i].Id == product.Id)
-            {
-                _products[i] = product;
-                
-                if (product.Stock > 0)
-                {
-                    _products[i].IsAvailable = true;
-                }
-                else
-                {
-                    _products[i].IsAvailable = false;
-                }
-                
-                return true;
-            }
-        }
-        
-        return false;
+        var existing = _products.FirstOrDefault(p => p.Id == product.Id);
+        if (existing == null)
+            return false;
+
+        var index = _products.IndexOf(existing);
+        _products[index] = product;
+        return true;
     }
-    
-    public void DeleteProduct(int id)
+
+    public async Task<bool> DeleteAsync(int id)
     {
-        _products.RemoveAll(p => p.Id == id);
+        return _products.RemoveAll(p => p.Id == id) > 0;
     }
-    
-    public List<Product> SearchProducts(string name)
+
+    public async Task<IEnumerable<Product>> SearchByNameAsync(string name)
     {
-        return _products.Where(p => p.Name.Contains(name)).ToList();
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Search term cannot be empty");
+
+        return _products.Where(p => p.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
     }
-    
-    public List<Product> GetAvailableProducts()
+
+    public async Task<decimal> GetTotalInventoryValueAsync()
     {
-        return _products.Where(p => p.IsAvailable && p.Stock > 0).ToList();
-    }
-    
-    public decimal GetTotalInventoryValue()
-    {
-        decimal total = 0;
-        foreach (var product in _products)
-        {
-            total += product.Price * product.Stock;
-        }
-        
-        Console.WriteLine($"Total inventory value: {total}");
-        
-        return total;
+        return _products.Sum(p => p.Price * p.Stock);
     }
 }
