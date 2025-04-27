@@ -11,7 +11,7 @@ $VerbosePreference = if ($VerboseOutput) { "Continue" } else { "SilentlyContinue
 
 # Array of project paths relative to the repository root
 $projectPaths = @(
-    # "WebAPP/EventManagement.API",
+    "WebAPP/EventManagement.API",
     "Refactoring/DataLayerRefactoring",
     "Refactoring/CommunicationPattern"
     # Add more project paths as needed
@@ -305,6 +305,11 @@ function Invoke-DataSeeding {
             return $false
         }
         
+        if (-not (Is-DatabaseEmpty -ConnectionString $connectionString)) {
+            Write-Log "Database is not empty. Skipping data seeding for $ProjectPath." "Info"
+            return $true
+        }
+
         # For SQLite
         if ($connectionString -match "Data Source=(.+)") {
             $dbPath = $Matches[1]
@@ -348,6 +353,47 @@ function Invoke-DataSeeding {
     }
     finally {
         Pop-Location
+    }
+}
+
+function Is-DatabaseEmpty {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$ConnectionString
+    )
+    
+    # For SQLite
+    if ($ConnectionString -match "Data Source=(.+)") {
+        $dbPath = $Matches[1]
+        $absoluteDbPath = Join-Path -Path (Get-Location) -ChildPath $dbPath
+        
+        if (Test-CommandExists "sqlite3") {
+            $query = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';"
+            $tableCount = & sqlite3 $absoluteDbPath $query
+            return [int]$tableCount -eq 0
+        }
+        else {
+            Write-Log "SQLite CLI not found. Cannot check if database is empty." "Warning"
+            return $false
+        }
+    }
+    # For SQL Server
+    elseif ($ConnectionString -match "Server=(.+);Database=(.+);") {
+        if (Test-CommandExists "sqlcmd") {
+            $server = $Matches[1]
+            $database = $Matches[2]
+            $query = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE') SELECT 0 ELSE SELECT 1;"
+            $result = & sqlcmd -S $server -d $database -Q $query -h -1
+            return [int]$result -eq 1
+        }
+        else {
+            Write-Log "SQL Server CLI (sqlcmd) not found. Cannot check if database is empty." "Warning"
+            return $false
+        }
+    }
+    else {
+        Write-Log "Unsupported database type in connection string: $ConnectionString" "Error"
+        return $false
     }
 }
 
