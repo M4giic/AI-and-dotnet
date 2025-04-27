@@ -2,6 +2,10 @@ using EventManagement.Core.Data;
 using EventManagement.Core.Repositories;
 using EventManagement.Core.Services;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
+
+
+Batteries_V2.Init();
 
 var builder = WebApplication.CreateBuilder(args);
 

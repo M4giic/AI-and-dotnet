@@ -47,8 +47,6 @@ ServiceFabricBackup/
 *.pubxml
 *.publishproj
 PublishScripts/
-Migrations/
-Migrations.cs
 
 # Angular / Web specific
 node_modules/
