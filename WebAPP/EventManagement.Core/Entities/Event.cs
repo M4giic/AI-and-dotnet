@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using EventManagement.Core.Validation;
 
 namespace EventManagement.Core.Entities
 {
@@ -28,9 +30,12 @@ namespace EventManagement.Core.Entities
         public int Capacity { get; set; }
 
         public EventType Type { get; set; }
-
+       
+        [RequireParentEventForSubEvent]
         public int? ParentEventId { get; set; }
-        public Event ParentEvent { get; set; }
+        
+        [JsonIgnore]
+        public Event? ParentEvent { get; set; }
 
         public ICollection<Event> SubEvents { get; set; } = new List<Event>();
 

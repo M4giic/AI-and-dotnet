@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using EventManagement.Core.Data;
 using EventManagement.Core.Repositories;
 using EventManagement.Core.Services;
@@ -28,7 +29,11 @@ builder.Services.AddDbContext<EventManagementDbContext>(options =>
     }
 });
     
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 // In Program.cs of the API project
 builder.Services.AddCors(options =>
 {

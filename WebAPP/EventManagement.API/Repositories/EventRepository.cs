@@ -18,9 +18,10 @@ public class EventRepository : IEventRepository
 
     public async Task<List<Event>> GetAllAsync()
     {
-        return await _context.Events
+        var events = await _context.Events
             .Include(e => e.ParentEvent)
             .ToListAsync();
+        return events;
     }
 
     public async Task<Event> GetByIdAsync(int id)
