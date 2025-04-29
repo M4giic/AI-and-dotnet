@@ -1,5 +1,6 @@
-using EventManagement.Core.Data;
-using EventManagement.Core.Repositories;
+using EventManagement.API.Data;
+using EventManagement.API.Repositories;
+using EventManagement.API.Services;
 using EventManagement.Core.Services;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;

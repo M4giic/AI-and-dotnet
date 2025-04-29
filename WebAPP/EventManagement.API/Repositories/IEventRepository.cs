@@ -1,8 +1,6 @@
 ﻿using EventManagement.Core.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace EventManagement.Core.Repositories;
+namespace EventManagement.API.Repositories;
 
 public interface IEventRepository
 {

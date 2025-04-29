@@ -1,7 +1,7 @@
 ﻿using EventManagement.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventManagement.Core.Data;
+namespace EventManagement.API.Data;
 
 public class EventManagementDbContext : DbContext
 {

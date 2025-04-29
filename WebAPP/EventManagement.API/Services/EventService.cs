@@ -1,7 +1,8 @@
-﻿using EventManagement.Core.Entities;
-using EventManagement.Core.Repositories;
+﻿using EventManagement.API.Repositories;
+using EventManagement.Core.Entities;
+using EventManagement.Core.Services;
 
-namespace EventManagement.Core.Services;
+namespace EventManagement.API.Services;
 
 public class EventService : IEventService
 {
@@ -36,13 +37,11 @@ public class EventService : IEventService
     {
         ValidateEvent(eventItem);
             
-        // Set event to Draft status if not specified
         if (eventItem.Status == 0)
         {
             eventItem.Status = EventStatus.Draft;
         }
 
-        // Ensure proper relationship for sub-events
         if (eventItem.Type == EventType.SubEvent && !eventItem.ParentEventId.HasValue)
         {
             throw new ArgumentException("Sub-events must have a parent event.");

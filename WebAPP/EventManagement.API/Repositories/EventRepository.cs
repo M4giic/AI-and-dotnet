@@ -1,11 +1,8 @@
-﻿using EventManagement.Core.Data;
+﻿using EventManagement.API.Data;
 using EventManagement.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace EventManagement.Core.Repositories;
+namespace EventManagement.API.Repositories;
 
 public class EventRepository : IEventRepository
 {
