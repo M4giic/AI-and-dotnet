@@ -11,9 +11,9 @@ $VerbosePreference = if ($VerboseOutput) { "Continue" } else { "SilentlyContinue
 
 # Array of project paths relative to the repository root
 $projectPaths = @(
-    "WebAPP/EventManagement.API",
-    "Refactoring/DataLayerRefactoring",
-    "Refactoring/CommunicationPattern"
+    "Day1/WebAPP/EventManagement.API",
+    "Day1/Refactoring/DataLayerRefactoring",
+    "Day1/Refactoring/CommunicationPattern"
     # Add more project paths as needed
     # "src/ClientApp"  # Angular app path
 )
