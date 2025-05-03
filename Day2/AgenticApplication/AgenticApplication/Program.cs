@@ -20,13 +20,19 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddSwaggerGen();
 }
 
-// Register service configurations
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
-builder.Services.Configure<GmailSettings>(builder.Configuration.GetSection("GmailSettings"));
-builder.Services.Configure<AgentSettings>(builder.Configuration.GetSection("AgentSettings"));
-builder.Services.Configure<OpenAiSettings>(builder.Configuration.GetSection("OpenAI"));
+IConfigurationRoot config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddUserSecrets<Program>()
+    .AddEnvironmentVariables()
+    .Build();
 
-var agentSettings = builder.Configuration.GetSection("AgentSettings").Get<AgentSettings>();
+// Register service configurations
+builder.Services.Configure<EmailSettings>(config.GetSection("EmailSettings"));
+builder.Services.Configure<GmailSettings>(config.GetSection("GmailSettings"));
+builder.Services.Configure<AgentSettings>(config.GetSection("AgentSettings"));
+builder.Services.Configure<OpenAiSettings>(config.GetSection("OpenAI"));
+
+var agentSettings = config.GetSection("AgentSettings").Get<AgentSettings>();
 if (agentSettings.PromptSource == "LangFuse")
 {
     //we will add lang fuse here later
@@ -40,8 +46,9 @@ else
 builder.Services.AddScoped<IOpenAiClientService, OpenAiClientService>();
 
 // Register tools
-builder.Services.AddScoped<EmailTool>();
+builder.Services.AddScoped<EmailSenderTool>();
 builder.Services.AddScoped<GmailReaderTool>();
+builder.Services.AddScoped<FinalResonseTool>();
 
 // Register core services
 builder.Services.AddScoped<IToolFactory, ToolFactory>();

@@ -30,7 +30,7 @@ public class ToolFactory : IToolFactory
         foreach (var toolType in toolTypes)
         {
             // Create a temporary instance to get the tool name
-            var tool = (ITool)Activator.CreateInstance(toolType);
+            var tool = (ITool)_serviceProvider.GetRequiredService(toolType);
             _toolTypes[tool.ToolName.ToLower()] = toolType;
         }
     }
@@ -39,8 +39,9 @@ public class ToolFactory : IToolFactory
     {
         return toolName.ToLower() switch
         {
-            "email" => _serviceProvider.GetRequiredService<EmailTool>(),
+            "email-sender" => _serviceProvider.GetRequiredService<EmailSenderTool>(),
             "gmail-reader" => _serviceProvider.GetRequiredService<GmailReaderTool>(),
+            "final" => _serviceProvider.GetRequiredService<FinalResonseTool>(),
             _ => throw new ArgumentException($"Tool '{toolName}' not found")
         };
     }
@@ -49,9 +50,9 @@ public class ToolFactory : IToolFactory
     {
         return toolName.ToLower() switch
         {
-            "email" => true,
+            "email-sender" => true,
             "gmail-reader" => true,
-            "logic" => true,
+            "final" => true,
             _ => false
         };
     }

@@ -29,9 +29,9 @@ public class OpenAiClientService : IOpenAiClientService
         IOptions<OpenAiSettings> settings,
         ILogger<OpenAiClientService> logger)
     {
-        _promptProvider = promptProvider;
-        _chatClient = new(model: "gpt-4o", apiKey: _settings.ApiKey);
+        _promptProvider = promptProvider;        
         _settings = settings.Value;
+        _chatClient = new(model: "gpt-4.1", apiKey: _settings.ApiKey);
         _logger = logger;
     }
 

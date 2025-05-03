@@ -1,31 +1,32 @@
 using AgenticApplication.Data.Models;
-using AgenticApplication.Tools;
+using AgenticApplication.Services;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace AgenticApplication.Services;
+namespace AgenticApplication.Tools;
 
-public class EmailTool : ITool
+public class EmailSenderTool : ITool
 {
     private readonly EmailSettings _emailSettings;
-    private readonly ILogger<EmailTool> _logger;
+    private readonly ILogger<EmailSenderTool> _logger;
 
-    public EmailTool(
+    public EmailSenderTool(
         IOptions<EmailSettings> emailSettings,
-        ILogger<EmailTool> logger)
+        ILogger<EmailSenderTool> logger)
     {
         _emailSettings = emailSettings.Value;
         _logger = logger;
     }
 
-    public string ToolName => "email";
+    public string ToolName => "email-sender";
 
     public string GetDescription()
     {
         return "Sends emails to recipients. Use this tool to compose and send emails with customized content. " +
-               "Can handle HTML formatting, subject lines, and multiple recipients including CC and BCC.";
+               "Can handle HTML formatting, subject lines, and multiple recipients including CC and BCC."+
+               "if email address is not known then to field should be empty. ";
     }
 
     public async Task<ToolResult> ExecuteAsync(ToolTask task)

@@ -49,27 +49,10 @@ public class AiAgentService : IAiAgentService
             // 2. Execute each task in the sequence
             var actionResults = new List<ActionResult>();
             var responseBuilder = new StringBuilder();
+            var toolResults = new Dictionary<string, ToolResult>();
 
             foreach (var step in taskSequence.Steps)
             {
-                // Skip dependent steps if the dependency failed
-                if (!string.IsNullOrEmpty(step.DependsOn))
-                {
-                    var dependentStep = taskSequence.Steps.FirstOrDefault(s => 
-                        s.ToolName.Equals(step.DependsOn, StringComparison.OrdinalIgnoreCase));
-                        
-                    var dependentAction = actionResults.FirstOrDefault(a => 
-                        a.ActionType.Equals(step.DependsOn, StringComparison.OrdinalIgnoreCase));
-                        
-                    if (dependentStep != null && (dependentAction == null || !dependentAction.Data.ContainsKey("success") || 
-                        !(bool)dependentAction.Data["success"]))
-                    {
-                        _logger.LogInformation("Skipping step {Tool} because dependency {Dependency} failed or was skipped", 
-                            step.ToolName, step.DependsOn);
-                        continue;
-                    }
-                }
-
                 // Execute the current step
                 var task = new ToolTask
                 {
@@ -78,7 +61,7 @@ public class AiAgentService : IAiAgentService
                     Data = step.Parameters
                 };
 
-                var result = await _toolingService.ExecuteTaskAsync(task);
+                var result = await _toolingService.ExecuteTaskAsync(task, toolResults);
 
                 // Add to action results
                 var actionResult = new ActionResult
@@ -91,6 +74,7 @@ public class AiAgentService : IAiAgentService
                         { "message", result.Message }
                     }
                 };
+                toolResults[step.ToolName] = result;
 
                 // Add all result data
                 foreach (var item in result.ResultData)
@@ -149,7 +133,7 @@ public class AiAgentService : IAiAgentService
                 planningPromptData.Context = conext.ToString();
             }
             
-            var response = await _openAiClientService.GetUserAndSystemCompletionAsync(nameof(PlanningPromptBase),request.Message, planningPromptData);
+            var response = await _openAiClientService.GetUserAndSystemCompletionAsync(nameof(PlanningPrompt),request.Message, planningPromptData);
             
             // Extract JSON from the response - it might be wrapped in markdown code blocks
             var jsonMatch = Regex.Match(response, @"\{[\s\S]*\}");
@@ -158,7 +142,10 @@ public class AiAgentService : IAiAgentService
                 var json = jsonMatch.Value;
                 try
                 {
-                    var taskSequence = JsonSerializer.Deserialize<TaskSequence>(json);
+                    var taskSequence = JsonSerializer.Deserialize<TaskSequence>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
                     return taskSequence;
                 }
                 catch (JsonException ex)

@@ -28,6 +28,10 @@ public class FileSystemPromptProvider : IPromptProvider
     {
         try
         {
+            if (_promptCache.ContainsKey(promptName))
+            {
+                return Task.FromResult(_promptCache[promptName]);
+            }
             // Search for types in the current assembly that implement PromptBase
             var assembly = typeof(PromptBase).Assembly;
             var promptType = assembly.GetTypes()
@@ -40,15 +44,18 @@ public class FileSystemPromptProvider : IPromptProvider
             }
 
             // Create an instance of the prompt type
-            var promptInstance = Activator.CreateInstance(promptType) as PromptBase;
+            var promptInstance = Activator.CreateInstance(promptType);
             if (promptInstance == null)
             {
                 _logger.LogError("Failed to create instance of prompt: {PromptName}", promptName);
                 return null;
             }
 
-            // Return the Content property
-            return Task.FromResult(promptInstance.Content);
+            var property = promptType.GetProperty("Content");
+            var propertyValue = (string)property.GetValue(promptInstance);
+
+            _promptCache[promptName] = propertyValue;
+            return Task.FromResult(propertyValue);
         }
         catch (Exception ex)
         {

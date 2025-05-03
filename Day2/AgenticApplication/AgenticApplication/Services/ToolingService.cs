@@ -13,7 +13,7 @@ public class ToolingService : IToolingService
         _logger = logger;
     }
 
-    public async Task<ToolResult> ExecuteTaskAsync(ToolTask task)
+    public async Task<ToolResult> ExecuteTaskAsync(ToolTask task, Dictionary<string, ToolResult> previousResults = null)
     {
         if (task == null || string.IsNullOrEmpty(task.ToolName))
         {
@@ -38,6 +38,14 @@ public class ToolingService : IToolingService
             }
 
             var tool = _toolFactory.GetTool(task.ToolName);
+            if (previousResults != null && previousResults.Count > 0)
+            {
+                // Add previous results to the task data
+                if (task.Data == null)
+                    task.Data = new Dictionary<string, object>();
+                
+                task.Data["_previousResults"] = previousResults;
+            }
             return await tool.ExecuteAsync(task);
         }
         catch (Exception ex)

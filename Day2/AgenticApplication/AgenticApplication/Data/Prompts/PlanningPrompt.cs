@@ -1,14 +1,13 @@
 ﻿namespace AgenticApplication.Data.Prompts;
 
-public class PlanningPromptBase : PromptBase
+public class PlanningPrompt : PromptBase
 {
     public string Content { get; init;  } = @"
 You are an AI assistant that plans tasks to fulfill user requests. 
 Based on the user's message, determine which tools to use and in what sequence.
 
 Available tools:
-{{tools}}
-
+{{Tools}}
 
 For each step in the sequence, provide:
 1. The tool name
@@ -17,16 +16,24 @@ For each step in the sequence, provide:
 4. Whether the step is required or optional
 5. Dependencies on other steps
 
+Always use result tool defined as ""final"" as last step so that agent will know when to respond to user.
+
+<Response>
 Format your response as a JSON object with a 'steps' array, where each step contains:
 - toolName: The name of the tool to use (one of the available tools)
 - instruction: Clear instruction for the tool
 - parameters: An object containing all necessary parameters
 - isRequired: Boolean indicating if this step is critical (default: true)
 - dependsOn: String indicating which tool this depends on (optional)
+Please refer to example to see the expected format.
+</Response>
 
+<Context>
 Context:
-{{context}}
+{{Context}}
+</Context>
 
+<Example>
 Example:
 {
   ""steps"": [
@@ -47,10 +54,10 @@ Example:
         ""subject"": ""Re: Your latest inquiry""
       },
       ""isRequired"": false,
-      ""dependsOn"": ""gmail-reader""
     }
   ]
-}";
+}
+</Example>";
 }
 
 public class PlanningPromptData
