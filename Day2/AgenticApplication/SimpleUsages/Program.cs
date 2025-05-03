@@ -1,14 +1,16 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenAI.Chat;
+using SimpleUsages.SimpleCalls;
 
 Console.WriteLine("Hello, World!");
 
 var configuration = new ConfigurationBuilder()
     .AddUserSecrets<Program>()
     .Build();
-    
-    
+
+var audioCall = new Audio();
+audioCall.MakeAudioCall();
 var serviceProvider = new ServiceCollection()
     .AddSingleton<IConfiguration>(configuration)
     .AddSingleton<ChatClient>(_ => 
