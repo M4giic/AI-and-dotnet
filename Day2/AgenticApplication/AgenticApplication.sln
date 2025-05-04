@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgenticApplication", "Agent
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleUsages", "SimpleUsages\SimpleUsages.csproj", "{F6A2EB85-32F8-49F0-9A12-21C661E3C805}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandaloneTools", "StandaloneTools\StandaloneTools.csproj", "{C4F04CD0-3BF1-4701-B271-EF2A927D3F0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{F6A2EB85-32F8-49F0-9A12-21C661E3C805}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6A2EB85-32F8-49F0-9A12-21C661E3C805}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6A2EB85-32F8-49F0-9A12-21C661E3C805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4F04CD0-3BF1-4701-B271-EF2A927D3F0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4F04CD0-3BF1-4701-B271-EF2A927D3F0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4F04CD0-3BF1-4701-B271-EF2A927D3F0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4F04CD0-3BF1-4701-B271-EF2A927D3F0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

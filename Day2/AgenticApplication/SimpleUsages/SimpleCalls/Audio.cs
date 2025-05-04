@@ -4,13 +4,12 @@ namespace SimpleUsages.SimpleCalls;
 
 public class Audio
 {
-    public void MakeAudioCall()
+    public void MakeAudioCall(string apiKey)
     {
-        ChatClient client = new("gpt-4o-audio-preview", 
-            "you-api-key-here");
+        ChatClient client = new("gpt-4o-audio-preview", apiKey);
 
         // Input audio is provided to a request by adding an audio content part to a user message
-        string audioFilePath = Path.Combine("Assets", "pytanie-do-ai-5.wav");
+        string audioFilePath = Path.Combine("Assets", "pytanie-od-Wikuni.wav");
         byte[] audioFileRawBytes = File.ReadAllBytes(audioFilePath);
         BinaryData audioData = BinaryData.FromBytes(audioFileRawBytes);
         List<ChatMessage> messages =
