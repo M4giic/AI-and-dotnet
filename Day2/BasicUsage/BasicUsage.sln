@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleUsages", "SimpleUsages\SimpleUsages.csproj", "{BC62CF07-C0F3-4D59-A74F-FBFE078EA51D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandaloneTools", "StandaloneTools\StandaloneTools.csproj", "{D511AAB5-6603-449D-8550-AA9FC622082F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC62CF07-C0F3-4D59-A74F-FBFE078EA51D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC62CF07-C0F3-4D59-A74F-FBFE078EA51D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC62CF07-C0F3-4D59-A74F-FBFE078EA51D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC62CF07-C0F3-4D59-A74F-FBFE078EA51D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D511AAB5-6603-449D-8550-AA9FC622082F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D511AAB5-6603-449D-8550-AA9FC622082F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D511AAB5-6603-449D-8550-AA9FC622082F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D511AAB5-6603-449D-8550-AA9FC622082F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
