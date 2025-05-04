@@ -139,7 +139,7 @@ function Install-NodeAndNpm {
 # Function to install Angular CLI if not present
 function Install-AngularCLI {
     if (Test-CommandExists "ng") {
-        $ngVersion = & ng version --version
+        $ngVersion = & ng --version
         Write-Log "Angular CLI version $ngVersion is already installed" "Info"
         return $true
     }
