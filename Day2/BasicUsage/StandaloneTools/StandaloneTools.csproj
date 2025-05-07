@@ -8,4 +8,9 @@
         <RootNamespace>Tools</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MailKit" Version="4.12.0" />
+      <PackageReference Include="OpenAI" Version="2.2.0-beta.4" />
+    </ItemGroup>
+
 </Project>

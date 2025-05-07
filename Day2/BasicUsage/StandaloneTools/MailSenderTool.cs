@@ -1,39 +1,47 @@
-using AgenticApplication.Data.Models;
-using AgenticApplication.Services;
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Options;
 using MimeKit;
+using OpenAI.Chat;
 
-namespace AgenticApplication.Tools;
+namespace Tools;
 
-public class EmailSenderTool : ITool
+public class ToolTask
 {
-    private readonly EmailSettings _emailSettings;
-    private readonly ILogger<EmailSenderTool> _logger;
+    public string ToolName { get; set; } = string.Empty;
+    public string Instruction { get; set; } = string.Empty;
+    public Dictionary<string, object> Data { get; set; } = new Dictionary<string, object>();  
+}
 
-    public EmailSenderTool(
-        IOptions<EmailSettings> emailSettings,
-        ILogger<EmailSenderTool> logger)
+public class ToolResult
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public Dictionary<string, object> ResultData { get; set; } = new Dictionary<string, object>();
+}
+
+public class EmailSettings
+{
+    public string SmtpServer { get; set; } = "smtp.gmail.com";
+    public int Port { get; set; } = 587;
+    public string SenderName { get; set; }
+    public string SenderEmail { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+    
+    public string ApiKey { get; set; } 
+}
+
+public class MailSenderTool
+{
+    private EmailSettings _emailSettings;
+    
+    public async Task<ToolResult> ExecuteAsync(ToolTask task, EmailSettings settings)
     {
-        _emailSettings = emailSettings.Value;
-        _logger = logger;
-    }
-
-    public string ToolName => "email-sender";
-
-    public string GetDescription()
-    {
-        return "Sends emails to recipients. Use this tool to compose and send emails with customized content. " +
-               "Can handle HTML formatting, subject lines, and multiple recipients including CC and BCC."+
-               "if email address is not known then to field should be empty. ";
-    }
-
-    public async Task<ToolResult> ExecuteAsync(ToolTask task)
-    {
+        _emailSettings = settings;
+        ChatClient chatClient = new("gpt-4.1",_emailSettings.ApiKey);
         try
         {
-            _logger.LogInformation("Executing Email Tool with instruction: {Instruction}", task.Instruction);
+            Console.WriteLine("Executing Email Tool with instruction: {0}", task.Instruction);
 
             // Extract email parameters from the task data
             if (!TryExtractEmailData(task.Data, out var to, out var subject, out var htmlContent, 
@@ -74,7 +82,8 @@ public class EmailSenderTool : ITool
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error executing Email Tool");
+            Console.WriteLine("Error executing Email Tool");
+            Console.WriteLine("Error message {0}",ex.Message);
             return new ToolResult
             {
                 Success = false,
@@ -162,13 +171,14 @@ public class EmailSenderTool : ITool
             await client.AuthenticateAsync(_emailSettings.Username, _emailSettings.Password);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
-                
-            _logger.LogInformation("Email sent successfully to {Recipient}", to);
+
+            Console.WriteLine("Email sent successfully to {0}", to);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {Recipient}", to);
+            Console.WriteLine("Failed to send email to {0}", to);
+            Console.WriteLine("Error: {0}", ex.Message);
             return false;
         }
     }
@@ -205,5 +215,10 @@ public class EmailSenderTool : ITool
         text = System.Text.RegularExpressions.Regex.Replace(text, @"\s+", " ");
             
         return text.Trim();
+    }
+    
+    private string GetLogicPrompt(string instruction)
+    {
+        return $"You are a tool that sends emails. Your task is to send an email with the following instruction: {instruction}";
     }
 }
