@@ -6,11 +6,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Tools</RootNamespace>
+        <UserSecretsId>StandaloneTools-ApiKeys-89127</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="MailKit" Version="4.12.0" />
       <PackageReference Include="OpenAI" Version="2.2.0-beta.4" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
     </ItemGroup>
 
 </Project>
