@@ -11,78 +11,71 @@ Console.WriteLine("Welcome to the Agent CLI Tool");
 Console.WriteLine("------------------------------");
 
 // Get API key from user secrets
-var apiKey = configuration["OpenAI:ApiKey"];
+var apiKeyOpenAi = configuration["OpenAI:ApiKey"] ?? string.Empty;
+var apiKeyMail = configuration["EmailSettings:ApiKey"] ?? string.Empty;
+var secretKeyMail = configuration["EmailSettings:SecretKey"] ?? string.Empty;
+
+// Initialize agent settings
+var agentSettings = new AgentSettings
+{
+    OpenAIApiKey = apiKeyOpenAi
+};
 
 // Initialize email settings
 var emailSettings = new EmailSettings
 {
     SenderName = "Agent CLI",
-    SenderEmail = "agent@example.com",
+    SenderEmail = "jendraas@gmail.com",
     Username = "jendraas@gmail.com", // Replace with your actual email
     Password = "hidden-password", // Replace with your actual app password
-    ApiKey = apiKey
+    ApiKey = apiKeyMail,
+    SecretKey = secretKeyMail,
 };
 
-// Check if API key is available
-if (string.IsNullOrEmpty(emailSettings.ApiKey))
-{
-    Console.WriteLine("Error: OpenAI API key not found in user secrets.");
-    Console.WriteLine("Please set it with: dotnet user-secrets set \"OpenAI:ApiKey\" \"your-api-key-here\"");
-    return;
-}
-
-// Initialize the agent processor
-var agentProcessor = new AgentProcessor(emailSettings);
+// Initialize the agent processor with both settings
+var agentProcessor = new AgentProcessor(emailSettings, agentSettings);
 
 while (true)
 {
     Console.WriteLine("\nEnter your request (or 'exit' to quit):");
     Console.Write("> ");
-    
+
     var userInput = Console.ReadLine();
-    
+
     if (string.IsNullOrWhiteSpace(userInput))
     {
         continue;
     }
-    
+
     if (userInput.Equals("exit", StringComparison.OrdinalIgnoreCase))
     {
         break;
     }
-    
+
     try
     {
-        // Step 1: Planning - Analyze user input to identify tasks
-        var tasks = await agentProcessor.PlanAsync(userInput);
-        
-        if (tasks.Count == 0)
+        var actionSequence = await agentProcessor.CreateActionSequenceAsync(userInput);
+
+        if (actionSequence == null || actionSequence.Actions == null || actionSequence.Actions.Count == 0)
         {
-            Console.WriteLine("No tasks identified from your request. Please try again with a clearer request.");
+            Console.WriteLine("No actions could be created from your request. Please try again with a clearer request.");
             continue;
         }
-        
-        // Process each identified task
-        foreach (var task in tasks)
+
+        // Execute each action in the sequence
+        foreach (var action in actionSequence.Actions)
         {
-            Console.WriteLine($"Processing task: {task.ToolName} - {task.Instruction}");
-            
-            // Step 2: Action - Prepare structured action sequence
-            var actionSequence = await agentProcessor.PrepareActionSequenceAsync(task);
-            
-            // Step 3: Tool Use - Execute each action in the sequence
-            foreach (var action in actionSequence.Actions)
+            Console.WriteLine($"Processing action: {action.ToolName} - {action.Instruction}");
+
+            var result = await agentProcessor.ExecuteToolAsync(action);
+
+            if (result.Success)
             {
-                var result = await agentProcessor.ExecuteToolAsync(action);
-                
-                if (result.Success)
-                {
-                    Console.WriteLine($"✅ Success: {result.Message}");
-                }
-                else
-                {
-                    Console.WriteLine($"❌ Error: {result.Message}");
-                }
+                Console.WriteLine($"✅ Success: {result.Message}");
+            }
+            else
+            {
+                Console.WriteLine($"❌ Error: {result.Message}");
             }
         }
     }

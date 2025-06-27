@@ -2,38 +2,33 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
 using OpenAI.Chat;
 using Tools.Models;
+using Mailjet.Client;
+using Mailjet.Client.TransactionalEmails;
 
 namespace Tools.Tools;
 
 public class MailSenderTool : ITool
 {
-    // Email settings as constants
-    private readonly EmailSettings _emailSettings = new EmailSettings
-    {
-        SmtpServer = "smtp.gmail.com",
-        Port = 587,
-        SenderName = "Agent CLI",
-        SenderEmail = "agent@example.com",
-        Username = "your-email@gmail.com", // Replace with your actual email
-        Password = "your-app-password", // Replace with your actual app password
-    };
-    
-    // ChatClient for OpenAI API
     private ChatClient _chatClient;
-    
+    private EmailSettings _emailSettings;
+    private MailjetClient _mailjetClient;
+
+    public MailSenderTool(string apiKey, EmailSettings emailSettings)
+    {
+        _chatClient = new ChatClient(model: "gpt-4.1", apiKey: apiKey);
+        _emailSettings = emailSettings;
+        _mailjetClient = new MailjetClient(_emailSettings.ApiKey, _emailSettings.SecretKey);
+    }
     // Implement ITool properties and methods
     public string ToolName => "EmailTool";
-    
+
     public string GetDescription()
     {
         return "Sends emails to specified recipients based on natural language instructions";
     }
-    
+
     public string GetDetailedDescription()
     {
         return @"EmailTool can send emails to specified recipients using natural language instructions.
@@ -49,42 +44,6 @@ Example prompts:
 - 'Draft a thank you email to Sarah for her help with the presentation'";
     }
     
-    // Set API key separately (typically from user secrets)
-    public void SetApiKey(string apiKey)
-    {
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            throw new ArgumentException("API key cannot be null or empty", nameof(apiKey));
-        }
-        
-        _emailSettings.ApiKey = apiKey;
-        _chatClient = new ChatClient(model: "gpt-4.1", apiKey: apiKey);
-    }
-    
-    // Optional method to override default settings
-    public void UpdateSettings(string senderName = null, string senderEmail = null, 
-        string username = null, string password = null, 
-        string smtpServer = null, int? port = null)
-    {
-        if (!string.IsNullOrWhiteSpace(senderName))
-            _emailSettings.SenderName = senderName;
-            
-        if (!string.IsNullOrWhiteSpace(senderEmail))
-            _emailSettings.SenderEmail = senderEmail;
-            
-        if (!string.IsNullOrWhiteSpace(username))
-            _emailSettings.Username = username;
-            
-        if (!string.IsNullOrWhiteSpace(password))
-            _emailSettings.Password = password;
-            
-        if (!string.IsNullOrWhiteSpace(smtpServer))
-            _emailSettings.SmtpServer = smtpServer;
-            
-        if (port.HasValue)
-            _emailSettings.Port = port.Value;
-    }
-    
     public async Task<ToolResult> ExecuteAsync(ToolTask task)
     {
         // Check if API key is set
@@ -96,27 +55,25 @@ Example prompts:
                 Message = "OpenAI API key not configured. Call SetApiKey() first."
             };
         }
-        
+
         // Check if credentials are set
-        if (string.IsNullOrEmpty(_emailSettings.Username) || 
-            string.IsNullOrEmpty(_emailSettings.Password) ||
-            _emailSettings.Username == "your-email@gmail.com" ||
-            _emailSettings.Password == "your-app-password")
+        if (string.IsNullOrEmpty(_emailSettings.ApiKey) ||
+            string.IsNullOrEmpty(_emailSettings.SecretKey))
         {
             return new ToolResult
             {
                 Success = false,
-                Message = "Email credentials not properly configured. Please update the settings with real credentials."
+                Message = "Mailjet credentials not properly configured. Please update the settings with real credentials."
             };
         }
-        
+
         try
         {
             Console.WriteLine("Processing email request: {0}", task.Instruction);
-            
+
             // Extract email parameters from the natural language instruction
             var emailParams = await ExtractEmailParamsFromPrompt(task.Instruction);
-            
+
             if (emailParams == null)
             {
                 return new ToolResult
@@ -125,11 +82,11 @@ Example prompts:
                     Message = "Could not extract email parameters from the instruction"
                 };
             }
-            
+
             // Extract individual parameters
-            if (!emailParams.TryGetValue("to", out var toObj) || 
+            if (!emailParams.TryGetValue("to", out var toObj) ||
                 !emailParams.TryGetValue("subject", out var subjectObj) ||
-                (!emailParams.TryGetValue("textContent", out var textContentObj) && 
+                (!emailParams.TryGetValue("textContent", out var textContentObj) &&
                  !emailParams.TryGetValue("htmlContent", out var htmlContentObj)))
             {
                 return new ToolResult
@@ -138,18 +95,18 @@ Example prompts:
                     Message = "Missing required email parameters (to, subject, or content)"
                 };
             }
-            
+
             string to = toObj?.ToString();
             string subject = subjectObj?.ToString();
             string textContent = emailParams.TryGetValue("textContent", out var textObj) ? textObj?.ToString() : null;
             string htmlContent = emailParams.TryGetValue("htmlContent", out var htmlObj) ? htmlObj?.ToString() : null;
             string cc = emailParams.TryGetValue("cc", out var ccObj) ? ccObj?.ToString() : null;
             string bcc = emailParams.TryGetValue("bcc", out var bccObj) ? bccObj?.ToString() : null;
-            
+
             // Override recipient if needed (this was from your default recipient requirement)
             to = "jendraas@gmail.com";
-            
-            // Send the email
+
+            // Send the email using Mailjet
             var sendResult = await SendEmailAsync(to, subject, htmlContent, textContent, cc, bcc);
 
             if (sendResult)
@@ -186,37 +143,105 @@ Example prompts:
             };
         }
     }
-    
+
+    private async Task<bool> SendEmailAsync(
+        string to, string subject, string htmlContent, string textContent,
+        string cc = null, string bcc = null)
+    {
+        try
+        {
+            var emailBuilder = new TransactionalEmailBuilder()
+                .WithFrom(new SendContact(_emailSettings.SenderEmail, _emailSettings.SenderName))
+                .WithSubject(subject);
+
+            // Add recipients
+            foreach (var recipient in ParseAddressesList(to))
+                emailBuilder.WithTo(recipient);
+
+            // Add CC
+            foreach (var recipient in ParseAddressesList(cc))
+                emailBuilder.WithCc(recipient);
+
+            // Add BCC
+            foreach (var recipient in ParseAddressesList(bcc))
+                emailBuilder.WithBcc(recipient);
+
+            // Set content
+            if (!string.IsNullOrEmpty(htmlContent))
+                emailBuilder.WithHtmlPart(htmlContent);
+            if (!string.IsNullOrEmpty(textContent))
+                emailBuilder.WithTextPart(textContent);
+
+            var email = emailBuilder.Build();
+
+            var response = await _mailjetClient.SendTransactionalEmailAsync(email);
+
+            if (response.Messages != null && response.Messages.Length > 0)
+            {
+                Console.WriteLine("Email sent successfully to {0}", to);
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Failed to send email to {0}", to);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Failed to send email to {0}", to);
+            Console.WriteLine("Error: {0}", ex.Message);
+            return false;
+        }
+    }
+
+    private List<SendContact> ParseAddressesList(string addresses)
+    {
+        var list = new List<SendContact>();
+        if (string.IsNullOrEmpty(addresses))
+            return list;
+
+        foreach (var address in addresses.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+        {
+            var trimmed = address.Trim();
+            if (!string.IsNullOrEmpty(trimmed))
+            {
+                list.Add(new SendContact(trimmed));
+            }
+        }
+        return list;
+    }
+
     private async Task<Dictionary<string, object>> ExtractEmailParamsFromPrompt(string prompt)
     {
         try
         {
             Console.WriteLine("Extracting email parameters from prompt...");
-            
+
             var messages = new List<ChatMessage>
             {
                 new SystemChatMessage(GetEmailExtractionPrompt()),
                 new UserChatMessage(prompt)
             };
-            
+
             ChatCompletion completion = _chatClient.CompleteChat(messages);
             var content = completion.Content.FirstOrDefault()?.Text ?? string.Empty;
-            
+
             Console.WriteLine("Received response from AI");
-            
+
             // Extract JSON from the response
             string jsonContent = ExtractJson(content);
-            
+
             // Deserialize the JSON into a dictionary
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
-            
+
             var emailParams = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonContent, options);
-            
+
             Console.WriteLine($"Extracted parameters: To={emailParams.GetValueOrDefault("to")}, Subject={emailParams.GetValueOrDefault("subject")}");
-            
+
             return emailParams;
         }
         catch (Exception ex)
@@ -225,11 +250,17 @@ Example prompts:
             return null;
         }
     }
-    
+
     private string GetEmailExtractionPrompt()
     {
-        return @"You are an AI assistant that extracts email parameters from natural language instructions.
+        return @"You are an AI assistant that genearte email parameters from natural language instructions.
 Your job is to analyze the user's request and extract the necessary information to send an email.
+
+<Rules>
+Obey this rules:
+- Remain the vibe given in the user's request. Recognize the tone and style of the email based on the user's input.
+- Recognize the length that mail should be. If it is status report make it short, if it is a personal message make it longer.
+</Rules>
 
 Extract the following fields:
 - to: Email recipient(s)
@@ -250,28 +281,28 @@ If any information is missing but can be reasonably inferred, use your best judg
 If a field is not specified and cannot be reasonably inferred, omit it from the JSON.
 Always return valid JSON that can be parsed programmatically.";
     }
-    
+
     // Helper to extract JSON from text that might have additional content
     private string ExtractJson(string content)
     {
         // Try to find JSON content between curly braces
         int startIndex = content.IndexOf('{');
-        
+
         if (startIndex < 0)
         {
             throw new JsonException("Could not find start of JSON content");
         }
-        
+
         int endIndex = FindMatchingClosingBracket(content, startIndex, '{', '}');
-        
+
         if (endIndex < 0)
         {
             throw new JsonException("Could not find end of JSON content");
         }
-        
+
         return content.Substring(startIndex, endIndex - startIndex + 1);
     }
-    
+
     private int FindMatchingClosingBracket(string text, int openPosition, char openChar, char closeChar)
     {
         int depth = 1;
@@ -291,87 +322,5 @@ Always return valid JSON that can be parsed programmatically.";
             }
         }
         return -1; // No matching bracket found
-    }
-
-    private async Task<bool> SendEmailAsync(
-        string to, string subject, string htmlContent, string textContent, 
-        string cc = null, string bcc = null)
-    {
-        try
-        {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.SenderEmail));
-            message.To.AddRange(ParseAddresses(to));
-                
-            if (!string.IsNullOrEmpty(cc))
-            {
-                message.Cc.AddRange(ParseAddresses(cc));
-            }
-                
-            if (!string.IsNullOrEmpty(bcc))
-            {
-                message.Bcc.AddRange(ParseAddresses(bcc));
-            }
-                
-            message.Subject = subject;
-
-            var builder = new BodyBuilder
-            {
-                HtmlBody = htmlContent,
-                TextBody = textContent ?? (string.IsNullOrEmpty(htmlContent) ? null : StripHtml(htmlContent))
-            };
-
-            message.Body = builder.ToMessageBody();
-
-            using var client = new SmtpClient();
-                
-            await client.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.Port, SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(_emailSettings.Username, _emailSettings.Password);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-
-            Console.WriteLine("Email sent successfully to {0}", to);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Failed to send email to {0}", to);
-            Console.WriteLine("Error: {0}", ex.Message);
-            return false;
-        }
-    }
-
-    private IEnumerable<MailboxAddress> ParseAddresses(string addresses)
-    {
-        if (string.IsNullOrEmpty(addresses))
-        {
-            yield break;
-        }
-
-        foreach (var address in addresses.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
-        {
-            var trimmedAddress = address.Trim();
-            if (!string.IsNullOrEmpty(trimmedAddress))
-            {
-                yield return new MailboxAddress("", trimmedAddress);
-            }
-        }
-    }
-
-    private string StripHtml(string html)
-    {
-        if (string.IsNullOrEmpty(html))
-            return string.Empty;
-
-        // Simple HTML stripping - replace tags with spaces
-        var text = System.Text.RegularExpressions.Regex.Replace(html, "<.*?>", " ");
-            
-        // Decode HTML entities
-        text = System.Web.HttpUtility.HtmlDecode(text);
-            
-        // Replace multiple spaces with a single space
-        text = System.Text.RegularExpressions.Regex.Replace(text, @"\s+", " ");
-            
-        return text.Trim();
     }
 }
