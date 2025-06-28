@@ -19,6 +19,8 @@ Ten prompt jest bardzo dokładny i nie daje chatowi możliwości "twórczego" dz
 
 #programowanie/prompt/buildApplication 
 ```
+Wygeneruj aplikację 
+
 ## Technologia
 
 - Framework: ASP.NET Core 8.0
@@ -148,6 +150,8 @@ public class UnitOfWork : IUnitOfWork
 - Docker dla konteneryzacji
 - Azure DevOps dla ciągłej integracji i wdrażania
 - Automatyczne testy przy Pull Requestach
+
+Zadaj mi pytania o wszystkie rzeczy, które są dla Ciebie niejasne. Rozwiejmy wszystkie wątpliwości ZANIM zaczniesz generować kod.
 ```
 
 # System Prompt
