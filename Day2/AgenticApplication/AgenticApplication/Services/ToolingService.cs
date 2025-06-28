@@ -9,8 +9,9 @@ public class ToolingService : IToolingService
 
     public ToolingService(IToolFactory toolFactory, ILogger<ToolingService> logger)
     {
-        _toolFactory = toolFactory;
-        _logger = logger;
+        _toolFactory = toolFactory ?? throw new ArgumentNullException(nameof(toolFactory));
+        
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<ToolResult> ExecuteTaskAsync(ToolTask task, Dictionary<string, ToolResult> previousResults = null)

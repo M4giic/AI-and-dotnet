@@ -6,6 +6,7 @@ public class DataProcessor
 {
     public static string connectionString = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
     
+    
     public List<int> ProcessData(List<string> data)
     {
         var result = new List<int>();

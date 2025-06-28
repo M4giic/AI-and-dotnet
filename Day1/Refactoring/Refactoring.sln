@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationPattern", "CommunicationPattern\CommunicationPattern.csproj", "{0522FE52-06BC-493C-8C5E-EFB2E23CDDDB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayerRefactoring", "DataLayerRefactoring\DataLayerRefactoring.csproj", "{29D646EE-4324-4A7E-A381-AFFD810A1582}"
@@ -9,6 +8,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{38144CA1-EAFB-4C79-8350-BB93CF2A5CAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayerRefactoring.Tests.TestContainers", "DataLayerRefactoring.Tests.TestContainers\DataLayerRefactoring.Tests.TestContainers.csproj", "{BFAB135D-26AB-4CCE-95C9-C6F0385BC417}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BadCode.Tests", "BadCode.Tests\BadCode.Tests.csproj", "{B2E8A123-4567-8901-2345-6789ABCDEF01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,8 +33,13 @@ Global
 		{BFAB135D-26AB-4CCE-95C9-C6F0385BC417}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFAB135D-26AB-4CCE-95C9-C6F0385BC417}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFAB135D-26AB-4CCE-95C9-C6F0385BC417}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E8A123-4567-8901-2345-6789ABCDEF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E8A123-4567-8901-2345-6789ABCDEF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E8A123-4567-8901-2345-6789ABCDEF01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E8A123-4567-8901-2345-6789ABCDEF01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BFAB135D-26AB-4CCE-95C9-C6F0385BC417} = {38144CA1-EAFB-4C79-8350-BB93CF2A5CAD}
+		{B2E8A123-4567-8901-2345-6789ABCDEF01} = {38144CA1-EAFB-4C79-8350-BB93CF2A5CAD}
 	EndGlobalSection
 EndGlobal

@@ -1,15 +1,10 @@
-﻿namespace BadCode;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public class Product
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
-    public bool IsAvailable { get; set; }
-}
+namespace BadCode;
 
-public class ProductRepository
+public class ProductRepository : IProductRepository
 {
     private List<Product> _products = new List<Product>();
     

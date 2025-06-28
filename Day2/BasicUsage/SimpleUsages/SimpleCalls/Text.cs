@@ -6,7 +6,7 @@ public class Text
 {
     public void TryToGuess(string apiKey)
     {
-        ChatClient chatClient = new ChatClient(model: "gpt-4.1", apiKey: apiKey);
+        ChatClient chatClient = new (model: "gpt-4.1", apiKey: apiKey);
         var systemPrompt = GetSystemPromptGuess(); 
         var messages = new List<ChatMessage>
         {

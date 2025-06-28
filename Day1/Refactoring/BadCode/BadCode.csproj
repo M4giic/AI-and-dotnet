@@ -7,4 +7,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="xunit.assert" Version="2.5.1" />
+      <PackageReference Include="xunit.extensibility.core" Version="2.5.1" />
+    </ItemGroup>
+
 </Project>

@@ -4,11 +4,7 @@ public static class StringHelper
 {
     public static string Format(string input)
     {
-        string result = input.Trim();
-        
-        result = result.ToUpper();
-        
-        return result;
+        return input.Trim().ToUpper();
     }
     
     public static string Process(string text, bool removeSpaces)
@@ -20,15 +16,16 @@ public static class StringHelper
         
         if (removeSpaces)
         {
-            string noSpaces = "";
-            for (int i = 0; i < text.Length; i++)
+            // Use StringBuilder for efficient string concatenation instead of += in loop
+            var sb = new System.Text.StringBuilder(text.Length);
+            foreach (char c in text)
             {
-                if (text[i] != ' ')
+                if (c != ' ')
                 {
-                    noSpaces += text[i];
+                    sb.Append(c);
                 }
             }
-            return noSpaces;
+            return sb.ToString();
         }
         else
         {
@@ -38,33 +35,25 @@ public static class StringHelper
     
     public static bool IsPalindrome(string word)
     {
-        string reversed = "";
-        
-        for (int i = word.Length - 1; i >= 0; i--)
-        {
-            reversed += word[i];
-        }
-        
-        if (word == reversed)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        // Use built-in string methods instead of manual reversal with string concatenation
+        var reversed = new string(word.Reverse().ToArray());
+        return word.Equals(reversed, StringComparison.Ordinal);
     }
     
     public static int CountWords(string sentence)
     {
-        Console.WriteLine("Counting words in: " + sentence);
+        // Remove debug output - violates single responsibility principle
+        // Console.WriteLine("Counting words in: " + sentence);
         
         if (string.IsNullOrEmpty(sentence))
         {
             return 0;
         }
         
-        string[] words = sentence.Split(' ');
+        // Fix the bug: use Split with RemoveEmptyEntries to ignore empty strings
+        // created by consecutive spaces or leading/trailing spaces
+        string[] words = sentence.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         return words.Length;
     }
 }
+
