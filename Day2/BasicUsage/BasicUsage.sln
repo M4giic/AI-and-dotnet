@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# 
+#
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleUsages", "SimpleUsages\SimpleUsages.csproj", "{BC62CF07-C0F3-4D59-A74F-FBFE078EA51D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandaloneTools", "StandaloneTools\StandaloneTools.csproj", "{D511AAB5-6603-449D-8550-AA9FC622082F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioMessenger", "AudioMessenger\AudioMessenger.csproj", "{B1BCAA04-B87E-47B5-876F-53C469912C14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zajecia", "Zajecia\Zajecia.csproj", "{A3E01936-7E28-4CE7-BD6E-33EA6DE59805}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,5 +27,9 @@ Global
 		{B1BCAA04-B87E-47B5-876F-53C469912C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1BCAA04-B87E-47B5-876F-53C469912C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1BCAA04-B87E-47B5-876F-53C469912C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3E01936-7E28-4CE7-BD6E-33EA6DE59805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3E01936-7E28-4CE7-BD6E-33EA6DE59805}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3E01936-7E28-4CE7-BD6E-33EA6DE59805}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E01936-7E28-4CE7-BD6E-33EA6DE59805}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
